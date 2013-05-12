@@ -1,0 +1,63 @@
+<html>
+<head>
+  <title>Musical Stairs</title>
+  <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="js/date.format.js"></script>
+  <script src="js/audiofx.js"></script>
+  <style>
+    body{
+      font-family: Helvetica;
+      font-size: 20pt;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Make some noise!</h1>
+
+  <script>
+    function chr(o){ return String.fromCharCode(o)}
+
+    var set = {folder:"bell", type:'mp3'}
+
+    var steps = [
+      {key: 'W', options: {loop:false, volume: 1}, keyup: true},
+      {key: 'A', options: {loop:false, volume: 1}, keyup: true},
+      {key: 'D', options: {loop:false, volume: 1}, keyup: true},
+      {key: 'F', options: {loop:false, volume: 1}, keyup: true},
+      {key: 'G', options: {loop:false, volume: 1}, keyup: true}
+    ]
+
+    steps.forEach(function(step, index){
+      step.audio = AudioFX('sounds/'+set.folder+ '/' + index+'.'+set.type, step.options)
+    })
+
+    function getTime(){
+      var date = new Date() 
+      var time = date.format('h:MM TT ...  mmmm dS ... dddd')
+      steps[4].audio = AudioFX('http://tts-api.com/tts.mp3?q=' + time)
+    }
+
+    //setInterval(getTime, 15000)
+    //getTime()
+    
+    
+    $(document).keydown(function(e){
+      //console.log( e.which, chr(e.which) )
+      var step = steps.filter(function(step){ return step.key == chr(e.which) })
+      
+      if( step && step[0].audio ){
+        if( step[0].keyup == true ) step[0].audio.stop()
+        step[0].keyup = false
+        step[0].audio.play()
+      }
+    })
+
+    $(document).keyup(function(e){
+      var step = steps.filter(function(step){ return step.key == chr(e.which) })
+      if( step && step[0].audio) step[0].keyup = true
+    })
+
+  </script>
+</body>
+</html>
